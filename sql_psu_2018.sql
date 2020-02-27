@@ -1,3 +1,9 @@
+SELECT f.*,
+     ROUND((s.Mate_Colegio+s.Lenguaje_Colegio)/(s.Personas_Colegio*2),2) AS Promedio_PSU_Colegio, s.Personas_Colegio AS Total_Alumnos_Colegio
+
+FROM
+
+(
 SELECT 
     RIGHT(e.NUMERO_DOCUMENTO, 9) AS Cod_Persona,
     e.AÑO_PROCESO AS Año_Proceso, 
@@ -16,8 +22,6 @@ SELECT
     b.INGRESO_FAMILIAR AS Ing_Bruto_Familiar,
     'PSU' AS Tipo_Ingreso
 
-    --b.HORAS_DEDICA_TRABAJO AS Horas_Trabajo,
-    --b.PERSONAS_GRUPO_FAMILIAR AS Grupo_Familiar,
 FROM 
     Archivo_E as e
     LEFT JOIN 
@@ -82,3 +86,49 @@ FROM
 WHERE
     CODIGO IN ('11026', '11027', '11042')
 
+UNION ALL
+
+SELECT
+    RIGHT(a.NUMERO_DOCUMENTO, 9) AS Cod_Persona,
+    a.AÑO_PROCESO AS Año_Proceso, 
+    'LIBRE' AS Tipo_Alumno, 
+    SWITCH(ESTADO_DE_POSTULACION = '24', 'Convocado', ESTADO_DE_POSTULACION = '25', 'Lista Espera') AS Estado_Postulacion,
+    PREFERENCIA AS Preferencia_Carrera, MATEMATICA AS Ptje_PSU_Matematica,
+    a.PTJE_RANKING AS Ptje_Ranking,
+    a.LOCAL_EDUCACIONAL AS Local_Educacional,
+    a.UNIDAD_EDUCATIVA AS Unidad_Educativa,
+    SWITCH(a.GRUPO_DEPENDENCIA = '1', 'Particular Pagado', 
+        a.GRUPO_DEPENDENCIA = '2', 'Particular Subvencionado',
+        a.GRUPO_DEPENDENCIA = '3', 'Municipal') AS Grupo_Dependencia,
+    a.CODIGO_COMUNA AS Colegio_Cod_Comuna,
+    a.COD_COMUNA AS Domicilio_Cod_Comuna,
+    SWITCH (POND_AÑO_ACAD = '1', 'Actual', POND_AÑO_ACAD = '2', 'Anterior') AS PSU_Utilizada,
+    b.INGRESO_FAMILIAR AS Ing_Bruto_Familiar,
+    'BACHILLERATO' AS Tipo_Ingreso
+
+FROM 
+    Archivo_E as a
+    LEFT JOIN 
+        Archivo_B AS b
+        ON a.NUMERO_DOCUMENTO = b.NUMERO_DOCUMENTO
+
+WHERE
+(((a.NUMERO_DOCUMENTO)="00196205411" Or (a.NUMERO_DOCUMENTO)="0019708197K" Or (a.NUMERO_DOCUMENTO)="00198333506" Or (a.NUMERO_DOCUMENTO)="00198928712" Or (a.NUMERO_DOCUMENTO)="00199325671" Or (a.NUMERO_DOCUMENTO)="00199602144" Or (a.NUMERO_DOCUMENTO)="00199862723" Or (a.NUMERO_DOCUMENTO)="00200030915" Or (a.NUMERO_DOCUMENTO)="00200533402" Or (a.NUMERO_DOCUMENTO)="00200753151" Or (a.NUMERO_DOCUMENTO)="00201191394" Or (a.NUMERO_DOCUMENTO)="00201201144" Or (a.NUMERO_DOCUMENTO)="00201379822" Or (a.NUMERO_DOCUMENTO)="00201604907" Or (a.NUMERO_DOCUMENTO)="00201896533" Or (a.NUMERO_DOCUMENTO)="00202402356" Or (a.NUMERO_DOCUMENTO)="0020359402K" Or (a.NUMERO_DOCUMENTO)="00204007322" Or (a.NUMERO_DOCUMENTO)="00224573677"))
+AND CODIGO IN('11078')
+) AS f
+
+LEFT JOIN (SELECT ae.LOCAL_EDUCACIONAL, 
+ SWITCH(ae.GRUPO_DEPENDENCIA = '1', 'Particular Pagado', 
+        ae.GRUPO_DEPENDENCIA = '2', 'Particular Subvencionado',
+        ae.GRUPO_DEPENDENCIA = '3', 'Municipal') AS GRUPO_DEPENDENCIA,
+             ae.GRUPO_DEPENDENCIA, 
+             ae.UNIDAD_EDUCATIVA,
+            SUM(ae.MATEMATICA) AS Mate_Colegio,
+            SUM(LENGUAJE_Y_COMUNICACION) AS Lenguaje_Colegio,
+             COUNT(ae.NUMERO_DOCUMENTO) AS Personas_Colegio
+ 
+FROM Archivo_E as ae
+
+GROUP BY  ae.LOCAL_EDUCACIONAL, ae.GRUPO_DEPENDENCIA, ae.UNIDAD_EDUCATIVA
+)  AS s 
+ON (f.Grupo_Dependencia=s.Grupo_Dependencia) AND (f.Unidad_Educativa=s.UNIDAD_EDUCATIVA) AND (f.Local_Educacional=s.LOCAL_EDUCACIONAL)
