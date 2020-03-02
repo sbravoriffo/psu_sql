@@ -1,5 +1,6 @@
 SELECT f.*,
- ROUND((s.Mate_Colegio+s.Lenguaje_Colegio)/(s.Personas_Colegio*2),2) AS Promedio_PSU_Colegio, s.Personas_Colegio AS Total_Alumnos_Colegio
+	ROUND((s.Mate_Colegio+s.Lenguaje_Colegio)/(s.Personas_Colegio*2),2) AS Promedio_PSU_Colegio, 
+	s.Personas_Colegio AS Total_Alumnos_Colegio
 
 FROM
 
@@ -9,7 +10,7 @@ SELECT
     e.AÑO_PROCESO AS Año_Proceso, 
     SWITCH(CODIGO = '11026', 'CA', CODIGO = '11027', 'IICG', CODIGO = '11042', 'IC') AS Tipo_Alumno, 
     SWITCH(ESTADO_DE_POSTULACION = '24', 'Convocado', ESTADO_DE_POSTULACION = '25', 'Lista Espera') AS Estado_Postulacion,
-    PREFERENCIA AS Preferencia_Carrera, MATEMATICA AS Ptje_PSU_Matematica,
+    PREFERENCIA AS Preferencia_Carrera, MATEMATICA AS Ptje_PSU_Matematica, LENGUAJE_Y_COMUNICACION AS Ptje_PSU_Lenguaje,
     e.PTJE_RANKING AS Ptje_Ranking,
     e.LOCAL_EDUCACIONAL AS Local_Educacional,
     e.UNIDAD_EDUCATIVA AS Unidad_Educativa,
@@ -41,7 +42,7 @@ SELECT
     e.AÑO_PROCESO AS Año_Proceso, 
     SWITCH(CODIGO = '11026', 'CA', CODIGO = '11027', 'IICG', CODIGO = '11042', 'IC') AS Tipo_Alumno, 
     SWITCH(ESTADO_DE_POSTULACION = '24', 'Convocado', ESTADO_DE_POSTULACION = '25', 'Lista Espera') AS Estado_Postulacion,
-    PREFERENCIA AS Preferencia_Carrera, MATEMATICA AS Ptje_PSU_Matematica,
+    PREFERENCIA AS Preferencia_Carrera, MATEMATICA AS Ptje_PSU_Matematica, LENGUAJE_Y_COMUNICACION AS Ptje_PSU_Lenguaje,
     e.PTJE_RANKING AS Ptje_Ranking,
     e.LOCAL_EDUCACIONAL AS Local_Educacional,
     e.UNIDAD_EDUCATIVA AS Unidad_Educativa,
@@ -73,7 +74,7 @@ SELECT
     e.AÑO_PROCESO AS Año_Proceso, 
     'LIBRE' AS Tipo_Alumno, 
     SWITCH(ESTADO_DE_POSTULACION = '24', 'Convocado', ESTADO_DE_POSTULACION = '25', 'Lista Espera') AS Estado_Postulacion,
-    PREFERENCIA AS Preferencia_Carrera, MATEMATICA AS Ptje_PSU_Matematica,
+    PREFERENCIA AS Preferencia_Carrera, MATEMATICA AS Ptje_PSU_Matematica, LENGUAJE_Y_COMUNICACION AS Ptje_PSU_Lenguaje,
     e.PTJE_RANKING AS Ptje_Ranking,
     e.LOCAL_EDUCACIONAL AS Local_Educacional,
     e.UNIDAD_EDUCATIVA AS Unidad_Educativa,
